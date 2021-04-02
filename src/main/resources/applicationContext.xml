@@ -55,7 +55,9 @@
         <property name="maxActive" value="20"/>
     </bean>
 
-    <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <!--原生Mybatis-->
+    <!--<bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
+    <bean id="sessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="mapperLocations" value="classpath:mappers/*.xml"/>
         <!--指定Mybatis配置文件地址-->

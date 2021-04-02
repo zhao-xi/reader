@@ -14,7 +14,7 @@ public class TestService {
     @Transactional
     public void batchImport() {
         for(int i = 0; i < 5; i++) {
-            testMapper.insert();
+            testMapper.insertSample();
         }
     }
 }
