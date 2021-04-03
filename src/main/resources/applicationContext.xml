@@ -30,6 +30,7 @@
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
+    <mvc:default-servlet-handler/>
 
     <!--配置freemarker模版引擎-->
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
