@@ -72,6 +72,38 @@
                         }
                     }, "json")
                 })
+
+                $("#btnEvaluation").click(function (){
+                    $("#score").raty({}); // 转换为星型组件
+                    $("#dlgEvaluation").modal("show");
+                })
+
+                $("#btnSubmit").click(function (){
+                    var score = $("#score").raty("score"); // 获取评分
+                    var content = $("#content").val();
+                    if(score == 0 || $.trim(content) == "") {
+                        return; // 没选分数或没写内容
+                    }
+                    $.post("/evaluate", {
+                        score: score,
+                        content: content,
+                        bookId: ${book.bookId},
+                        memberId: ${loginMember.memberId},
+                    }, function(json) {
+                        if(json.code == "0") {
+                            window.location.reload(); // 刷新当前页面
+                        }
+                    }, "json")
+                })
+
+                $("*[data-evaluation-id]").click(function (){
+                    var evaluationId = $(this).data("evaluation-id");
+                    $.post("/enjoy", {evaluationId: evaluationId}, function (json) {
+                        if(json.code == "0") {
+                            $("*[data-evaluation-id='" + evaluationId + "'] span").text(json.evaluation.enjoy);
+                        }
+                    }, "json")
+                })
             </#if>
         })
     </script>
@@ -145,11 +177,12 @@
         <#list evaluationList as evaluation>
             <div>
                 <div>
-                    <span class="pt-1 small text-black-50 mr-2">${evaluation.createTime?string('MM-dd')}</span>
+                    <span class="pt-1 small text-black-50 mr-2">${evaluation.createTime?string('yyyy-MM-dd HH:mm')}</span>
                     <span class="mr-2 small pt-1">${evaluation.member.nickname}</span>
                     <span class="stars mr-2" data-score="${evaluation.score}"></span>
 
-                    <button type="button" data-evaluation-id="${evaluation.evaluationId}"
+                    <#--evaluationId后面加?c避免超过1000时自动在第三位加逗号，无法转换成long类型-->
+                    <button type="button" data-evaluation-id="${evaluation.evaluationId?c}"
                             class="btn btn-success btn-sm text-white float-right" style="margin-top: -3px;">
                         <img style="width: 24px;margin-top: -5px;" class="mr-1"
                              src="https://img3.doubanio.com/f/talion/7a0756b3b6e67b59ea88653bc0cfa14f61ff219d/pics/card/ic_like_gray.svg"/>
@@ -188,7 +221,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <h6>为"从 0 开始学爬虫"写短评</h6>
+                <h6>为"${book.bookName}"写短评</h6>
                 <form id="frmEvaluation">
                     <div class="input-group  mt-2 ">
                         <span id="score"></span>

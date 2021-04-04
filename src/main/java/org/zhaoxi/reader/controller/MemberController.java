@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.zhaoxi.reader.entity.Evaluation;
 import org.zhaoxi.reader.entity.Member;
 import org.zhaoxi.reader.exception.BussinessException;
 import org.zhaoxi.reader.service.MemberService;
@@ -112,6 +113,39 @@ public class MemberController {
             memberService.updateMemberReadState(memberId, bookId, readState);
             result.put("code", "0");
             result.put("msg", "success");
+        } catch (BussinessException e) {
+            e.printStackTrace();
+            result.put("code", e.getCode());
+            result.put("msg", e.getMsg());
+        }
+        return result;
+    }
+
+    @PostMapping("/evaluate")
+    @ResponseBody
+    public Map evaluate(Long memberId, Long bookId, Integer score, String content) {
+        Map result = new HashMap();
+        try {
+            memberService.evaluate(memberId, bookId, score, content);
+            result.put("code", "0");
+            result.put("msg", "success");
+        } catch (BussinessException e) {
+            e.printStackTrace();
+            result.put("code", e.getCode());
+            result.put("msg", e.getMsg());
+        }
+        return result;
+    }
+
+    @PostMapping("/enjoy")
+    @ResponseBody
+    public Map enjoy(Long evaluationId) {
+        Map result = new HashMap();
+        try {
+            Evaluation evaluation = memberService.enjoy(evaluationId);
+            result.put("code", "0");
+            result.put("msg", "success");
+            result.put("evaluation", evaluation);
         } catch (BussinessException e) {
             e.printStackTrace();
             result.put("code", e.getCode());

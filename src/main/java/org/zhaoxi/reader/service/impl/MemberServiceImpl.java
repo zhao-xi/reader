@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.zhaoxi.reader.entity.Evaluation;
 import org.zhaoxi.reader.entity.Member;
 import org.zhaoxi.reader.entity.MemberReadState;
 import org.zhaoxi.reader.exception.BussinessException;
+import org.zhaoxi.reader.mapper.EvaluationMapper;
 import org.zhaoxi.reader.mapper.MemberMapper;
 import org.zhaoxi.reader.mapper.MemberReadStateMapper;
 import org.zhaoxi.reader.service.MemberService;
@@ -24,6 +26,8 @@ public class MemberServiceImpl implements MemberService {
     private MemberMapper memberMapper;
     @Resource
     private MemberReadStateMapper memberReadStateMapper;
+    @Resource
+    private EvaluationMapper evaluationMapper;
 
      /**
      * 会员注册，创建新会员
@@ -113,5 +117,39 @@ public class MemberServiceImpl implements MemberService {
             memberReadStateMapper.updateById(memberReadState);
         }
         return memberReadState;
+    }
+
+    /**
+     * 发布新的短评
+     *
+     * @param memberId 会员id
+     * @param bookId   图书id
+     * @param score    评分
+     * @param content  短评内容
+     * @return 短评对象
+     */
+    public Evaluation evaluate(Long memberId, Long bookId, Integer score, String content) {
+        Evaluation evaluation = new Evaluation();
+        evaluation.setMemberId(memberId);
+        evaluation.setBookId(bookId);
+        evaluation.setScore(score);
+        evaluation.setContent(content);
+        evaluation.setEnjoy(0);
+        evaluation.setCreateTime(new Date());
+        evaluationMapper.insert(evaluation);
+        return evaluation;
+    }
+
+    /**
+     * 给短评点赞
+     *
+     * @param evaluationId 短评id
+     * @return 短评对象
+     */
+    public Evaluation enjoy(Long evaluationId) {
+        Evaluation evaluation = evaluationMapper.selectById(evaluationId);
+        evaluation.setEnjoy(evaluation.getEnjoy() + 1);
+        evaluationMapper.updateById(evaluation);
+        return evaluation;
     }
 }

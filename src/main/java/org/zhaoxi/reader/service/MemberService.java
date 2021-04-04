@@ -1,5 +1,6 @@
 package org.zhaoxi.reader.service;
 
+import org.zhaoxi.reader.entity.Evaluation;
 import org.zhaoxi.reader.entity.Member;
 import org.zhaoxi.reader.entity.MemberReadState;
 
@@ -37,4 +38,21 @@ public interface MemberService {
      * @return 阅读状态对象
      */
     public MemberReadState updateMemberReadState(Long memberId, Long bookId, Integer readState);
+
+    /**
+     * 发布新的短评
+     * @param memberId 会员id
+     * @param bookId 图书id
+     * @param score 评分
+     * @param content 短评内容
+     * @return 短评对象
+     */
+    public Evaluation evaluate(Long memberId, Long bookId, Integer score, String content);
+
+    /**
+     * 给短评点赞
+     * @param evaluationId 短评id
+     * @return 短评对象
+     */
+    public Evaluation enjoy(Long evaluationId);
 }
