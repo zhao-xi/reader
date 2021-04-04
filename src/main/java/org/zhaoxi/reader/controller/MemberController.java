@@ -26,6 +26,15 @@ public class MemberController {
         return new ModelAndView("/register");
     }
 
+    /**
+     * 注册用户
+     * @param vc 验证码
+     * @param username 用户名
+     * @param password 密码
+     * @param nickname 昵称
+     * @param request 当前请求对象
+     * @return 处理结果Map
+     */
     @PostMapping("/register")
     @ResponseBody
     public Map register(String vc, String username, String password, String nickname, HttpServletRequest request) {
@@ -55,6 +64,14 @@ public class MemberController {
         return new ModelAndView("/login");
     }
 
+    /**
+     * 校验登录表单
+     * @param username 用户名
+     * @param password 密码
+     * @param vc 验证码
+     * @param session 当前会话的session
+     * @return 处理结果Map
+     */
     @PostMapping("/check_login")
     @ResponseBody
     public Map checkLogin(String username, String password, String vc, HttpSession session) {
@@ -75,6 +92,30 @@ public class MemberController {
                 result.put("code", e.getCode());
                 result.put("msg", e.getMsg());
             }
+        }
+        return result;
+    }
+
+
+    /**
+     * 更新阅读状态（想看/看过）
+     * @param memberId 会员id
+     * @param bookId 图书id
+     * @param readState 阅读状态
+     * @return 处理结果Map
+     */
+    @PostMapping("/update_read_state")
+    @ResponseBody
+    public Map updateReadState(Long memberId, Long bookId, Integer readState) {
+        Map result = new HashMap();
+        try {
+            memberService.updateMemberReadState(memberId, bookId, readState);
+            result.put("code", "0");
+            result.put("msg", "success");
+        } catch (BussinessException e) {
+            e.printStackTrace();
+            result.put("code", e.getCode());
+            result.put("msg", e.getMsg());
         }
         return result;
     }

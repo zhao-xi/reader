@@ -2,10 +2,13 @@ package org.zhaoxi.reader.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.zhaoxi.reader.entity.Member;
+import org.zhaoxi.reader.entity.MemberReadState;
 import org.zhaoxi.reader.exception.BussinessException;
 import org.zhaoxi.reader.mapper.MemberMapper;
+import org.zhaoxi.reader.mapper.MemberReadStateMapper;
 import org.zhaoxi.reader.service.MemberService;
 import org.zhaoxi.reader.utils.MD5Utils;
 
@@ -19,6 +22,8 @@ import java.util.Random;
 public class MemberServiceImpl implements MemberService {
     @Resource
     private MemberMapper memberMapper;
+    @Resource
+    private MemberReadStateMapper memberReadStateMapper;
 
      /**
      * 会员注册，创建新会员
@@ -65,5 +70,48 @@ public class MemberServiceImpl implements MemberService {
             throw new BussinessException("M03", "密码错误");
         }
         return member;
+    }
+
+    /**
+     * 获取阅读状态
+     *
+     * @param memberId 会员id
+     * @param bookId   图书id
+     * @return 阅读状态对象
+     */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED, readOnly = true)
+    public MemberReadState selectMemberReadState(Long memberId, Long bookId) {
+        QueryWrapper<MemberReadState> queryWrapper = new QueryWrapper<MemberReadState>();
+        queryWrapper.eq("book_id", bookId);
+        queryWrapper.eq("member_id", memberId);
+        MemberReadState memberReadState = memberReadStateMapper.selectOne(queryWrapper);
+        return memberReadState;
+    }
+
+    /**
+     * 更新阅读状态
+     *
+     * @param memberId  会员id
+     * @param bookId    图书id
+     * @param readState 阅读状态
+     * @return 阅读状态对象
+     */
+    public MemberReadState updateMemberReadState(Long memberId, Long bookId, Integer readState) {
+        QueryWrapper<MemberReadState> queryWrapper = new QueryWrapper<MemberReadState>();
+        queryWrapper.eq("book_id", bookId);
+        queryWrapper.eq("member_id", memberId);
+        MemberReadState memberReadState = memberReadStateMapper.selectOne(queryWrapper);
+        if(memberReadState == null) {
+            memberReadState = new MemberReadState();
+            memberReadState.setBookId(bookId);
+            memberReadState.setMemberId(memberId);
+            memberReadState.setReadState(readState);
+            memberReadState.setCreateTime(new Date());
+            memberReadStateMapper.insert(memberReadState);
+        } else {
+            memberReadState.setReadState(readState);
+            memberReadStateMapper.updateById(memberReadState);
+        }
+        return memberReadState;
     }
 }

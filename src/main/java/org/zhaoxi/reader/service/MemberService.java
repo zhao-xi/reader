@@ -1,6 +1,7 @@
 package org.zhaoxi.reader.service;
 
 import org.zhaoxi.reader.entity.Member;
+import org.zhaoxi.reader.entity.MemberReadState;
 
 public interface MemberService {
     /**
@@ -19,4 +20,21 @@ public interface MemberService {
      * @return 登录用户对象
      */
     public Member checkLogin(String username, String password);
+
+    /**
+     * 获取阅读状态
+     * @param memberId 会员id
+     * @param bookId 图书id
+     * @return 阅读状态对象
+     */
+    public MemberReadState selectMemberReadState(Long memberId, Long bookId);
+
+    /**
+     * 更新阅读状态
+     * @param memberId 会员id
+     * @param bookId 图书id
+     * @param readState 阅读状态
+     * @return 阅读状态对象
+     */
+    public MemberReadState updateMemberReadState(Long memberId, Long bookId, Integer readState);
 }
