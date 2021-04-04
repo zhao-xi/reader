@@ -192,7 +192,7 @@
         <ul class="nav">
             <li class="nav-item">
                 <a href="/">
-                    <img src="./images/myIconSmall.png" class="mt-1" style="width: 100px">
+                    <img src="/images/myIconSmall.png" class="mt-1" style="width: 100px">
                 </a>
             </li>
 

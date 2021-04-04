@@ -13,4 +13,6 @@ public interface BookService {
      * @return 分页对象
      */
     public IPage<Book> paging(Long categoryId, String order, Integer page, Integer rows);
+
+    public Book selectById(Long bookId);
 }
