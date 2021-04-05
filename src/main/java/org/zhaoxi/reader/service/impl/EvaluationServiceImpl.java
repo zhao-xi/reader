@@ -1,6 +1,8 @@
 package org.zhaoxi.reader.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import org.zhaoxi.reader.mapper.MemberMapper;
 import org.zhaoxi.reader.service.EvaluationService;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -43,5 +46,35 @@ public class EvaluationServiceImpl implements EvaluationService {
             e.setBook(book);
         }
         return evaluationList;
+    }
+
+    public IPage<Evaluation> paging(Integer page, Integer rows) {
+        Page<Evaluation> p = new Page<Evaluation>(page, rows);
+        QueryWrapper<Evaluation> queryWrapper = new QueryWrapper<Evaluation>();
+        queryWrapper.orderByDesc("create_time");
+        IPage<Evaluation> pageObject = evaluationMapper.selectPage(p, queryWrapper);
+        for(Evaluation e : pageObject.getRecords()) {
+            Member member = memberMapper.selectById(e.getMemberId());
+            Book book = bookMapper.selectById(e.getBookId());
+            e.setMember(member);
+            e.setBook(book);
+        }
+        return pageObject;
+    }
+
+    /**
+     * 禁用短评
+     *
+     * @param evaluationId  短评id
+     * @param disableReason 禁用理由
+     * @return 短评对象
+     */
+    public Evaluation disable(Long evaluationId, String disableReason) {
+        Evaluation evaluation = evaluationMapper.selectById(evaluationId);
+        evaluation.setState("disable");
+        evaluation.setDisableReason(disableReason);
+        evaluation.setDisableTime(new Date());
+        evaluationMapper.updateById(evaluation);
+        return evaluation;
     }
 }

@@ -1,11 +1,12 @@
 package org.zhaoxi.reader.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("book")
 public class Book {
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long bookId;
     private String bookName;
     private String subTitle;

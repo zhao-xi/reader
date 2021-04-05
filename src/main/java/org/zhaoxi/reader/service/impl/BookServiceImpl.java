@@ -7,7 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.zhaoxi.reader.entity.Book;
+import org.zhaoxi.reader.entity.Evaluation;
+import org.zhaoxi.reader.entity.MemberReadState;
 import org.zhaoxi.reader.mapper.BookMapper;
+import org.zhaoxi.reader.mapper.EvaluationMapper;
+import org.zhaoxi.reader.mapper.MemberReadStateMapper;
 import org.zhaoxi.reader.service.BookService;
 
 import javax.annotation.Resource;
@@ -18,6 +22,10 @@ public class BookServiceImpl implements BookService {
 
     @Resource
     private BookMapper bookMapper;
+    @Resource
+    private MemberReadStateMapper memberReadStateMapper;
+    @Resource
+    private EvaluationMapper evaluationMapper;
 
     /**
      * 分页查询图书
@@ -55,5 +63,32 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public void updateEvaluation() {
         bookMapper.updateEvaluation();
+    }
+
+    @Transactional
+    public Book createBook(Book book) {
+        bookMapper.insert(book);
+        return book;
+    }
+
+    @Transactional
+    public Book updateBook(Book book) {
+        bookMapper.updateById(book);
+        return book;
+    }
+
+    /**
+     * 删除图书及相关数据
+     * @param bookId
+     */
+    @Transactional
+    public void deleteBook(Long bookId) {
+        bookMapper.deleteById(bookId);
+        QueryWrapper<MemberReadState> mrsQueryWrapper = new QueryWrapper<MemberReadState>();
+        mrsQueryWrapper.eq("book_id", bookId);
+        memberReadStateMapper.delete(mrsQueryWrapper);
+        QueryWrapper<Evaluation> evaQueryWrapper = new QueryWrapper<Evaluation>();
+        evaQueryWrapper.eq("book_id", bookId);
+        evaluationMapper.delete(evaQueryWrapper);
     }
 }
