@@ -96,4 +96,5 @@
             </bean>
         </property>
     </bean>
+    <task:annotation-driven/>
 </beans>
