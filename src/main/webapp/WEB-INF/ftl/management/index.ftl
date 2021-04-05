@@ -22,7 +22,7 @@
                     <span class="layui-icon layui-icon-user" style="font-size: 20px">
                     </span>
                     <!--用户信息-->
-                    admin
+                    ${admin_user.username}
                 </a>
             </li>
             <!--注销按钮-->
